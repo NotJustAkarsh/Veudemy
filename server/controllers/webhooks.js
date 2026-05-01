@@ -8,7 +8,8 @@ export const clerkWebhooks = async (req, res) => {
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
         await whook.verify(JSON.stringify(req.body), {
             "svix-id": req.headers["svix-id"],
-            "svix-timestamp": req.headers["svix-signature"]
+            "svix-timestamp": req.headers["svix-timestamp"],
+            "svix-signature": req.headers["svix-signature"],
         })
 
         const { data, type } = req.body
@@ -17,34 +18,46 @@ export const clerkWebhooks = async (req, res) => {
             case 'user.created': {
                 const userData = {
                     _id: data.id,
-                    email: data.email_addresses[0].email_address,
-                    name: data.first_name + "" + data.last_name,
+                    email: data.email_address[0].email_address,
+                    name: data.first_name + " " + data.last_name,
                     imageUrl: data.image_url,
                 }
                 await User.create(userData)
-                res.json({})
+                res.status(201).json({
+                    message: "User Created Successfully",
+                    success: true,
+                })
                 break
             }
 
             case 'user.updated': {
                 const userData ={
                     email: data.email_address[0].email_address,
-                    name: data.first_name + "" + data.last_name,
+                    name: data.first_name + " " + data.last_name,
                     imageUrl: data.image_url,
                 }
                 await User.findByIdAndUpdate(data.id, userData)
-                res.json({})
+                res.status(200).json({
+                    message: "User Updated Successfully",
+                    success: true,
+                })
                 break;
             }
 
             case 'user.deleted': {
                 await User.findByIdAndDelete(data.id)
-                res.json({})
+                res.status(200).json({
+                    message: "User Deleted Successfully",
+                    success: true,
+                })
                 break;
             }
 
             default:
-                break;
+                res.status(400).json({
+                    message: "Invalid Webhook Type",
+                    success: false,
+                })
         }
     } catch (error) {
         res.json({success : false, message: error.message})

@@ -4,7 +4,7 @@ const connectDB = async () => {
   try {
     const conn = await mongoose.connect(`${process.env.MONGODB_URI}/veudemy`);
 
-    console.log("MongoDB Connected:", conn);
+    console.log("Database Connected");
   } catch (error) {
     console.log(error);
     process.exit(1);
