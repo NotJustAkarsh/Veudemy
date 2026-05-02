@@ -56,10 +56,7 @@ export const clerkWebhooks = async (req, res) => {
             }
 
             default:
-                res.status(400).json({
-                    message: "Invalid Webhook Type",
-                    success: false,
-                })
+                break;
         }
     } catch (error) {
         res.json({success : false, message: error.message})
