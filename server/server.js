@@ -17,7 +17,8 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
-app.post("/clerk", express.json(), clerkWebhooks);
+// Webhook endpoint - must use raw body for signature verification
+app.post("/clerk", express.raw({ type: 'application/json' }), clerkWebhooks);
 
 
 // port

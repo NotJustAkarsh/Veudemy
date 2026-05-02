@@ -6,13 +6,15 @@ import User from "../models/User.js"
 export const clerkWebhooks = async (req, res) => {
     try {
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
-        await whook.verify(JSON.stringify(req.body), {
+        const payload = req.body instanceof Buffer ? req.body.toString('utf8') : JSON.stringify(req.body);
+        await whook.verify(payload, {
             "svix-id": req.headers["svix-id"],
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"],
         })
 
-        const { data, type } = req.body
+        const body = typeof payload === 'string' ? JSON.parse(payload) : req.body;
+        const { data, type } = body
 
         switch (type) {
             case 'user.created': {
