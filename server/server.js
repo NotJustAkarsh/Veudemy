@@ -7,7 +7,7 @@ import { clerkWebhooks } from "./controllers/webhooks.js";
 const app = express();
 
 // connect database
- connectDB();
+connectDB();
 
 // middlewares
 app.use(cors());
@@ -17,7 +17,8 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
-app.post('/clerk', express.json, clerkWebhooks)
+app.post("/clerk", express.json(), clerkWebhooks);
+
 
 // port
 const PORT = process.env.PORT || 5000;
